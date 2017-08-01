@@ -94,7 +94,7 @@ public class InputDiaryFragment extends Fragment {
                         Diary diary = realm.where(Diary.class).equalTo("id",mDiaryId).findFirst();
                         diary.title = editable.toString();
                     }
-                })
+                });
             }
         });
 

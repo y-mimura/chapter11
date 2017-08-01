@@ -1,9 +1,16 @@
 package com.example.mimurayuuya.mydiary;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.view.MenuItem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,6 +64,15 @@ public class MyUtils {
         Bitmap bmp = BitmapFactory.decodeStream(in,null,opt);
         in.close();
         return bmp;
+    }
+
+    public static void tintMenuIcon(Context context , MenuItem item ,
+                                    @ColorRes int color){
+        Drawable normalDrawable = item.getIcon();
+        Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
+        DrawableCompat.setTint(wrapDrawable,
+                ContextCompat.getColor(context, color));
+        item.setIcon(wrapDrawable);
     }
 
 }

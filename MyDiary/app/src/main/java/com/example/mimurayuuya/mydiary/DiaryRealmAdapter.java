@@ -1,6 +1,7 @@
 package com.example.mimurayuuya.mydiary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,20 @@ public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary,
                 .from(parent.getContext())
                 .inflate(R.layout.card_layout,parent,false);
         final DiaryViewHolder holder = new DiaryViewHolder(itemView);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = holder.getAdapterPosition();
+                Diary diary = getData().get(position);
+                long diaryId = diary.id;
+
+                Intent intent = new Intent(context,ShowDiaryActivity.class);
+                intent.putExtra(ShowDiaryActivity.DIARY_ID,diaryId);
+                context.startActivity(intent);
+            }
+        });
+
         return holder;
     }
 
