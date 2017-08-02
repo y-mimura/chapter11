@@ -4,8 +4,10 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -186,12 +189,27 @@ public class InputDiaryFragment extends Fragment {
                 // ギャラリーから選択した画像を利用
 
                 Uri uri = (data == null) ? null:data.getData();
+
                 if (uri != null){
                     try{
+                        Cursor c = getActivity().getContentResolver().query(uri,new String[]{MediaStore.Images.Media.DATA},null,null,null);
+                        String filePath = null;
+                        if (c.moveToFirst()){
+                            int index = c.getColumnIndex(MediaStore.Images.Media.DATA);
+                            // 画像ファイルのディレクトリを取得
+                            filePath = c.getString(index);
+                            ExifInterface ex = new ExifInterface(filePath);
+                            String altitude = ex.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
+                            String latitude = ex.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                            //Log.d("Exif Altitude",ex.getAttribute(ExifInterface.TAG_GPS_ALTITUDE));
+                            //Log.d("Exif Latitude",ex.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                        }
                         Bitmap img = MyUtils.getImageFromStream(getActivity().getContentResolver(),uri);
                         mDiaryImage.setImageBitmap(img);
                     }catch (java.io.IOException e){
                         e.printStackTrace();
+                    }catch (Exception ex){
+                        ex.printStackTrace();
                     }
                     mRealm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
