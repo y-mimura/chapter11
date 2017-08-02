@@ -1,11 +1,14 @@
 package com.example.mimurayuuya.mydiary;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -144,28 +147,27 @@ public class InputDiaryFragment extends Fragment {
     }
 
     private void pickImage(){
-        Intent intent = new Intent(Intent.ACTION_PICK,
+        Intent pickImageIntent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        startActivityForResult(
-                Intent.createChooser(
-                        intent,
-                        getString(R.string.pick_image)
-                ),REQUEST_CODE);
+        pickImageIntent.setType("image/*");
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent chooserIntent = Intent.createChooser(pickImageIntent,"画像を選択");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,new Intent[]{cameraIntent});
+
+        startActivityForResult(chooserIntent,REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-            Uri uri = (data == null) ? null:data.getData();
-            if (uri != null){
-                try{
-                    Bitmap img = MyUtils.getImageFromStream(getActivity().getContentResolver(),uri);
-                    mDiaryImage.setImageBitmap(img);
-                }catch (java.io.IOException e){
-                    e.printStackTrace();
-                }
+            if (data != null && data.getExtras() != null &&
+                    data.getExtras().get("data") != null){
+                // カメラで撮影した画像を利用
+
+                Bitmap img = (Bitmap) data.getExtras().get("data");
+                mDiaryImage.setImageBitmap(img);
                 mRealm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -180,7 +182,34 @@ public class InputDiaryFragment extends Fragment {
                         }
                     }
                 });
+            }else{
+                // ギャラリーから選択した画像を利用
+
+                Uri uri = (data == null) ? null:data.getData();
+                if (uri != null){
+                    try{
+                        Bitmap img = MyUtils.getImageFromStream(getActivity().getContentResolver(),uri);
+                        mDiaryImage.setImageBitmap(img);
+                    }catch (java.io.IOException e){
+                        e.printStackTrace();
+                    }
+                    mRealm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            Diary diary = realm.where(Diary.class)
+                                    .equalTo("id",mDiaryId)
+                                    .findFirst();
+                            BitmapDrawable bitmap =
+                                    (BitmapDrawable) mDiaryImage.getDrawable();
+                            byte[] bytes = MyUtils.getByteFromImage(bitmap.getBitmap());
+                            if (bytes != null && bytes.length > 0){
+                                diary.image = bytes;
+                            }
+                        }
+                    });
+                }
             }
+
         }
     }
 
