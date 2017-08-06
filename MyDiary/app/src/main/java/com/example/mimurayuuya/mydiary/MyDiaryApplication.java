@@ -14,8 +14,10 @@ public class MyDiaryApplication extends Application {
     public void onCreate(){
         super.onCreate();
         Realm.init(this);
+
         RealmConfiguration realmConfig =
-                new RealmConfiguration.Builder().build();
+                new RealmConfiguration.Builder()
+                        .migration(new Migration()).build();
         Realm.setDefaultConfiguration(realmConfig);
     }
 }

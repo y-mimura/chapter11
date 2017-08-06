@@ -3,6 +3,12 @@ package com.example.mimurayuuya.mydiary;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +18,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.Locale;
+
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
-public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary,
-        DiaryRealmAdapter.DiaryViewHolder> {
-
+public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary, DiaryRealmAdapter.DiaryViewHolder>
+{
     Context context;
 
     @Override
@@ -49,6 +58,7 @@ public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary,
         holder.title.setText(diary.title);
         holder.bodyText.setText(diary.bodyText);
         holder.date.setText(diary.date);
+        holder.location.setText(diary.location);
         if (diary.image != null && diary.image.length != 0){
             Bitmap bmp = MyUtils.getImageFromByte(diary.image);
             holder.photo.setImageBitmap(bmp);
@@ -59,6 +69,7 @@ public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary,
         protected TextView title;
         protected TextView bodyText;
         protected TextView date;
+        protected TextView location;
         protected ImageView photo;
 
         public DiaryViewHolder(View itemView){
@@ -66,6 +77,7 @@ public class DiaryRealmAdapter extends RealmRecyclerViewAdapter<Diary,
             title = (TextView) itemView.findViewById(R.id.title);
             bodyText = (TextView) itemView.findViewById(R.id.body);
             date = (TextView) itemView.findViewById(R.id.date);
+            location = (TextView) itemView.findViewById(R.id.location);
             photo = (ImageView) itemView.findViewById(R.id.diary_photo);
         }
     }

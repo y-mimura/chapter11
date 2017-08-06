@@ -1,6 +1,8 @@
 package com.example.mimurayuuya.mydiary;
 
 import java.text.SimpleDateFormat;
+
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,7 +18,12 @@ import android.view.MenuItem;
 import java.util.Date;
 import java.util.Locale;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
+import io.realm.RealmSchema;
+import io.realm.exceptions.RealmMigrationNeededException;
 
 public class MainActivity extends AppCompatActivity
         implements DiaryListFragment.OnFragmentInteractionListener {
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mRealm = Realm.getDefaultInstance();
+        //mRealm = Realm.getInstance(realmConfig);
 
         //createTestData();
         showDiaryList();

@@ -1,5 +1,7 @@
 package com.example.mimurayuuya.mydiary;
 
+import android.location.Location;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -13,5 +15,6 @@ public class Diary extends RealmObject {
     public String title;
     public String bodyText;
     public String date;
+    public String location;
     public byte[] image;
 }

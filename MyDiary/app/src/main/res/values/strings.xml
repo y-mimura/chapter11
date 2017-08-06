@@ -97,4 +97,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="rationale_camera">カメラで画像を撮影して日記に表示するには許可をタップします。</string>
+    <string name="rationale_location">日記に位置情報を付加するには許可をタップします。</string>
+    <string name="capture_image">カメラで撮影します</string>
 </resources>
