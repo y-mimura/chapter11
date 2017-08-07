@@ -1,35 +1,25 @@
 package com.example.mimurayuuya.mydiary;
 
 import android.Manifest;
-import android.content.ContentValues;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.PaintDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ExifInterface;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 
 import io.realm.Realm;
-import io.realm.internal.IOException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -76,7 +65,7 @@ public class InputDiaryFragment extends Fragment implements LocationListener {
             mDiaryId = getArguments().getLong(DIARY_ID);
         }
         mRealm = Realm.getDefaultInstance();
-        mLocationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager)getActivity().getSystemService(Activity.LOCATION_SERVICE);
     }
 
     @Override
@@ -332,7 +321,7 @@ public class InputDiaryFragment extends Fragment implements LocationListener {
     public void onLocationChanged(Location location) {
         // 住所の取得
         final StringBuffer strAddress = new StringBuffer();
-        Geocoder geocorder = new Geocoder(getContext(), Locale.JAPAN);
+        Geocoder geocorder = new Geocoder(getActivity(), Locale.JAPAN);
         try{
             List<Address> addressList =
                     geocorder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
